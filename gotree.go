@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/nsf/termbox-go"
 	"io/ioutil"
+	//"os"
+	//"path/filepath"
 	"strings"
 )
 
@@ -13,7 +15,7 @@ var folderLevelMinned int
 var rootPath string
 
 func init() {
-	termboxLine = 0
+	termboxLine = 1
 	folderLevelMinned = 0
 }
 
@@ -33,6 +35,8 @@ func main() {
 	if userpath := flag.Arg(0); userpath != "" {
 		rootPath = userpath
 	}
+	//rootPathTest, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+	displayFirstLine(rootPath)
 	displayDir(rootPath, "")
 loop:
 	for {
@@ -43,6 +47,19 @@ loop:
 				break loop
 			}
 		}
+	}
+}
+
+func displayFirstLine(rootPath string) {
+	x := 0
+
+	for _, r := range rootPath {
+		termbox.SetCell(x, 0, r, termbox.ColorWhite, termbox.ColorBlue)
+		x += 1
+	}
+	w, _ := termbox.Size()
+	for x = x; x < w; x++ {
+		termbox.SetCell(x, 0, ' ', termbox.ColorWhite, termbox.ColorBlue)
 	}
 }
 
