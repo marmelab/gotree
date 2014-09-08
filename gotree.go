@@ -42,12 +42,3 @@ func displayDir(path string, previousIndent string) {
 		}
 	}
 }
-
-func displayIndent(previousIndent string) (nextIndent string) {
-	s := []string{previousIndent, "-"}
-	nextIndent = strings.Join(s, "/")
-	return
-}
-
-//└──
-// ├──
