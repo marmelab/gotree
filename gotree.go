@@ -53,11 +53,10 @@ func displayDir(path string, previousIndent string) {
 			indent = "└── "
 			nextIndent = "       "
 		}
-		displayLineInTermbox(fmt.Sprintf("%s%s%s", previousIndent, indent, f.Name()))
+		displayLineInTermbox(fmt.Sprintf("%s%s%s", previousIndent, indent, f.Name()), f.IsDir())
 		if f.IsDir() {
 			s := []string{path, f.Name()}
 			nextPath := strings.Join(s, "/")
-
 			s[0] = previousIndent
 			s[1] = nextIndent
 			displayDir(nextPath, fmt.Sprintf("%s%s", previousIndent, nextIndent))
@@ -66,10 +65,16 @@ func displayDir(path string, previousIndent string) {
 	termbox.Flush()
 }
 
-func displayLineInTermbox(name string) {
+func displayLineInTermbox(name string, isDir bool) {
+	// TODO transform name string in runes ?
 	x := 0
 	for _, r := range name {
-		termbox.SetCell(x, y, r, termbox.ColorDefault, termbox.ColorDefault)
+		if isDir {
+			termbox.SetCell(x, y, r, termbox.ColorGreen, termbox.ColorDefault)
+		} else {
+			termbox.SetCell(x, y, r, termbox.ColorDefault, termbox.ColorDefault)
+		}
+
 		x += 1
 	}
 	y += 1
