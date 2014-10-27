@@ -1,9 +1,9 @@
 package main
 
 import (
+	"bitbucket.org/alexisjanvier/gotree"
 	"flag"
 	"github.com/nsf/termbox-go"
-	"gotree"
 )
 
 var rootPath string
