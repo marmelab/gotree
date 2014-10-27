@@ -15,10 +15,6 @@ type File struct {
 	name  string
 }
 
-func init() {
-	currentLine = 0
-}
-
 func InitDir(path string) {
 	if "" == rootPath {
 		rootPath = path
