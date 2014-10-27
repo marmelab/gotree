@@ -15,8 +15,8 @@ var currentLine int
 var files []File
 
 type File struct {
-	isDir 	bool
-	name   	string
+	isDir bool
+	name  string
 }
 
 func init() {
@@ -53,16 +53,16 @@ loop:
 		switch ev := termbox.PollEvent(); ev.Type {
 		case termbox.EventKey:
 			switch ev.Key {
-				case termbox.KeyEsc:
-					break loop
-				case termbox.KeyArrowDown:
-					changeSelect("down")
-				case termbox.KeyArrowUp:
-					changeSelect("up")
-				case termbox.KeyArrowRight:
-					enterDir()
-				case termbox.KeyArrowLeft:
-					leaveDir()
+			case termbox.KeyEsc:
+				break loop
+			case termbox.KeyArrowDown:
+				changeSelect("down")
+			case termbox.KeyArrowUp:
+				changeSelect("up")
+			case termbox.KeyArrowRight:
+				enterDir()
+			case termbox.KeyArrowLeft:
+				leaveDir()
 			}
 		}
 	}
@@ -130,12 +130,12 @@ func draw(x int, y int, r rune, isDir bool, selected bool) {
 	if isDir {
 		fg = termbox.ColorGreen
 	}
-	
+
 	termbox.SetCell(x, y, r, fg, bg)
 }
 
 func changeSelect(position string) {
-	if "down" == position && currentLine == len(files) - 1 {
+	if "down" == position && currentLine == len(files)-1 {
 		return
 	}
 
@@ -145,7 +145,7 @@ func changeSelect(position string) {
 
 	x := 0
 	for _, r := range files[currentLine].name {
-		draw(x, currentLine + 1, r, files[currentLine].isDir, false)
+		draw(x, currentLine+1, r, files[currentLine].isDir, false)
 
 		x += 1
 	}
@@ -158,7 +158,7 @@ func changeSelect(position string) {
 
 	x = 0
 	for _, r := range files[currentLine].name {
-		draw(x, currentLine + 1, r, files[currentLine].isDir, true)
+		draw(x, currentLine+1, r, files[currentLine].isDir, true)
 
 		x += 1
 	}
@@ -168,7 +168,7 @@ func changeSelect(position string) {
 
 func enterDir() {
 	if !files[currentLine].isDir {
-		return;
+		return
 	}
 
 	termboxLine = 1
