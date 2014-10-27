@@ -24,11 +24,16 @@ func InitDir(path string) {
 
 	displayBreadcrumb(path)
 
+	c := make(chan File)
+	go fetchFiles(path, c)
+
 	first := true
-	for i, f := range fetchFiles(path) {
+	i := 0
+	for f := range c {
 		displayLine(i+1, f, first)
 
 		first = false
+		i += 1
 	}
 
 	displayStop()
@@ -82,18 +87,21 @@ func LeaveDir() {
 	InitDir(path)
 }
 
-// use generator/parallelism/coroutine
-func fetchFiles(path string) []File {
+func fetchFiles(path string, fs chan File) {
 	files = make([]File, 0)
+	var file File
 	dirFiles, _ := ioutil.ReadDir(path)
 
 	for _, f := range dirFiles {
 		if f.IsDir() && strings.HasPrefix(f.Name(), ".") {
 			continue
 		}
+		file = File{f.IsDir(), f.Name()}
+		fs <- file
 
-		files = append(files, File{f.IsDir(), f.Name()})
+		files = append(files, file)
+		// do something
 	}
 
-	return files
+	close(fs)
 }
