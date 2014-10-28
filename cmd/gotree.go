@@ -19,7 +19,7 @@ func main() {
 	}
 
 	var screen gotree.Screen = new(gotree.Termbox)
-	displayer := gotree.NewDisplayer(screen)
+	displayer := &gotree.Displayer{screen}
 
 	displayer.Init()
 	defer func() {

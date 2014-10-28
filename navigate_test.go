@@ -37,7 +37,7 @@ func TestInitDir(t *testing.T) {
 	assert := assert.New(t)
 
 	screen := new(DummyScreen)
-	displayer := NewDisplayer(screen)
+	displayer := &Displayer{screen}
 	navigator := NewNavigator(displayer, "fake")
 
 	screen.On("Clear", 0, 0).Return(nil)
@@ -82,7 +82,7 @@ func TestChangeSelect(t *testing.T) {
 	screen.On("Size").Return(1, 1)
 	screen.On("Flush").Return(nil)
 
-	displayer := NewDisplayer(screen)
+	displayer := &Displayer{screen}
 	navigator := NewNavigator(displayer, "fake")
 
 	navigator.currentLine = 2

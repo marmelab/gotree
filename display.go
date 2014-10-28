@@ -15,10 +15,6 @@ func (d Displayer) Init() {
 	}
 }
 
-func NewDisplayer(screen Screen) *Displayer {
-	return &Displayer{screen}
-}
-
 func (d Displayer) Start() {
 	d.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	d.Flush()
