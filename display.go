@@ -4,36 +4,44 @@ import (
 	"github.com/nsf/termbox-go"
 )
 
-func DisplayInit() {
+type Displayer struct {
+	Screen
+}
+
+func (d Displayer) Init() {
 	err := termbox.Init()
 	if err != nil {
 		panic(err)
 	}
 }
 
-func displayStart() {
-	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-	termbox.Flush()
+func NewDisplayer(screen Screen) *Displayer {
+	return &Displayer{screen}
 }
 
-func displayBreadcrumb(rootPath string) {
+func (d Displayer) Start() {
+	d.Clear(termbox.ColorDefault, termbox.ColorDefault)
+	d.Flush()
+}
+
+func (d Displayer) Breadcrumb(rootPath string) {
 	x := 0
 	for _, r := range rootPath {
-		termbox.SetCell(x, 0, r, termbox.ColorWhite, termbox.ColorBlue)
+		d.SetCell(x, 0, r, termbox.ColorWhite, termbox.ColorBlue)
 		x += 1
 	}
 
-	completeLine(x, 0, termbox.ColorWhite, termbox.ColorBlue)
+	d.completeLine(x, 0, termbox.ColorWhite, termbox.ColorBlue)
 }
 
-func completeLine(x int, y int, fg termbox.Attribute, bg termbox.Attribute) {
-	w, _ := termbox.Size()
+func (d Displayer) completeLine(x int, y int, fg termbox.Attribute, bg termbox.Attribute) {
+	w, _ := d.Size()
 	for ; x < w; x++ {
-		termbox.SetCell(x, y, ' ', fg, bg)
+		d.SetCell(x, y, ' ', fg, bg)
 	}
 }
 
-func displayLine(lineNumber int, file File, selected bool) {
+func (d Displayer) Line(lineNumber int, file File, selected bool) {
 	bg := termbox.ColorDefault
 	if selected {
 		bg = termbox.ColorMagenta
@@ -46,18 +54,18 @@ func displayLine(lineNumber int, file File, selected bool) {
 
 	x := 0
 	for _, r := range file.name {
-		termbox.SetCell(x, lineNumber, r, fg, bg)
+		d.SetCell(x, lineNumber, r, fg, bg)
 
 		x += 1
 	}
 
-	completeLine(x, lineNumber, fg, bg)
+	d.completeLine(x, lineNumber, fg, bg)
 }
 
-func displayStop() {
-	termbox.Flush()
+func (d Displayer) Stop() {
+	d.Flush()
 }
 
-func DisplayTerminate() {
+func (d Displayer) Terminate() {
 	termbox.Close()
 }

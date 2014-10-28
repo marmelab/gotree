@@ -18,12 +18,16 @@ func main() {
 		rootPath = userpath
 	}
 
-	gotree.DisplayInit()
+	var screen gotree.Screen = new(gotree.Termbox)
+	displayer := gotree.NewDisplayer(screen)
+
+	displayer.Init()
 	defer func() {
-		gotree.DisplayTerminate()
+		displayer.Terminate()
 	}()
 
-	gotree.InitDir(rootPath)
+	navigator := gotree.NewNavigator(displayer, rootPath)
+	navigator.InitDir(rootPath)
 
 loop:
 	for {
@@ -33,13 +37,13 @@ loop:
 			case termbox.KeyEsc:
 				break loop
 			case termbox.KeyArrowDown:
-				gotree.ChangeSelect("down")
+				navigator.ChangeSelect("down")
 			case termbox.KeyArrowUp:
-				gotree.ChangeSelect("up")
+				navigator.ChangeSelect("up")
 			case termbox.KeyArrowRight:
-				gotree.EnterDir()
+				navigator.EnterDir()
 			case termbox.KeyArrowLeft:
-				gotree.LeaveDir()
+				navigator.LeaveDir()
 			}
 		}
 	}

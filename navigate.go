@@ -5,90 +5,95 @@ import (
 	"strings"
 )
 
-var currentLine int
-var currentPath string
-var rootPath string
-var files []File
-
 type File struct {
 	isDir bool
 	name  string
 }
 
-func InitDir(path string) {
-	if "" == rootPath {
-		rootPath = path
-	}
+type Navigator struct {
+	display     *Displayer
+	currentPath string
+	rootPath    string
+	files       []File
+	currentLine int
+}
 
-	displayStart()
+func NewNavigator(display *Displayer, path string) *Navigator {
+	files := make([]File, 0)
 
-	displayBreadcrumb(path)
+	return &Navigator{display, path, path, files, 0}
+}
+
+func (n *Navigator) InitDir(path string) {
+	n.display.Start()
+
+	n.display.Breadcrumb(path)
 
 	c := make(chan File)
-	go fetchFiles(path, c)
+	go n.fetchFiles(path, c)
 
 	first := true
 	i := 0
 	for f := range c {
-		displayLine(i+1, f, first)
+		n.display.Line(i+1, f, first)
 
 		first = false
 		i += 1
 	}
 
-	displayStop()
+	n.display.Stop()
 
-	currentPath = path
-	currentLine = 0
+	n.currentPath = path
+	n.currentLine = 0
 }
 
-func ChangeSelect(position string) {
-	if "down" == position && currentLine == len(files)-1 {
+func (n *Navigator) ChangeSelect(position string) {
+	if "down" == position && n.currentLine == len(n.files)-1 {
 		return
 	}
 
-	if "up" == position && currentLine == 0 {
+	if "up" == position && n.currentLine == 0 {
 		return
 	}
 
-	displayLine(currentLine+1, files[currentLine], false)
+	n.display.Line(n.currentLine+1, n.files[n.currentLine], false)
 
 	if "up" == position {
-		currentLine -= 1
+		n.currentLine -= 1
 	} else {
-		currentLine += 1
+		n.currentLine += 1
 	}
 
-	displayLine(currentLine+1, files[currentLine], true)
+	n.display.Line(n.currentLine+1, n.files[n.currentLine], true)
 
-	displayStop()
+	n.display.Stop()
 }
 
-func EnterDir() {
-	if !files[currentLine].isDir {
+func (n *Navigator) EnterDir() {
+	if !n.files[n.currentLine].isDir {
 		return
 	}
 
-	s := []string{currentPath, files[currentLine].name}
+	s := []string{n.currentPath, n.files[n.currentLine].name}
 	path := strings.Join(s, "/")
 
-	InitDir(path)
+	n.InitDir(path)
 }
 
-func LeaveDir() {
-	if currentPath == rootPath {
+func (n *Navigator) LeaveDir() {
+	if n.currentPath == n.rootPath {
 		return
 	}
 
-	splitPath := strings.Split(currentPath, "/")
+	splitPath := strings.Split(n.currentPath, "/")
 	max := len(splitPath) - 1
 	path := strings.Join(splitPath[0:max], "/")
 
-	InitDir(path)
+	n.InitDir(path)
 }
 
-func fetchFiles(path string, fs chan File) {
-	files = make([]File, 0)
+func (n *Navigator) fetchFiles(path string, fs chan File) {
+	n.files = make([]File, 0)
 	var file File
 	dirFiles, _ := ioutil.ReadDir(path)
 
@@ -99,8 +104,8 @@ func fetchFiles(path string, fs chan File) {
 		file = File{f.IsDir(), f.Name()}
 		fs <- file
 
-		files = append(files, file)
-		// do something
+		n.files = append(n.files, file)
+		// do something more complex
 	}
 
 	close(fs)
