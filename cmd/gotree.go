@@ -1,8 +1,8 @@
 package main
 
 import (
-	"bitbucket.org/alexisjanvier/gotree"
 	"flag"
+	"github.com/marmelab/gotree"
 	"github.com/nsf/termbox-go"
 )
 
