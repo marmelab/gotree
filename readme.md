@@ -1,2 +1,2 @@
-# Tree with Goland
+# Tree with Golang
 a tree cli with Golang
